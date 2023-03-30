@@ -1,4 +1,4 @@
-
+from client import *
 import random
 
 class Card: 
@@ -77,13 +77,6 @@ def dealHand(cards, person):
         for i in range(10):
             player3.hand.append(cards[i+20])
 
-def getTF(player):
-    while True:
-        answer = input("\'Y\' for yes, or \'N\' for now: ")
-        if answer=="Y" or answer =='y':
-            return True
-        if answer=="N" or answer == "n":
-            return False
 
 
 def bidding(pos1,pos2,pos3):
@@ -94,38 +87,38 @@ def bidding(pos1,pos2,pos3):
     while True:
         bid+=1
         #ask pos2 and pos 1 if they will bid next bid
-        print(f"{pos2.name} is {biddingOrder[bid]} acceptable?")
-        if getTF(pos2):
-            print(f"{pos1.name} is {biddingOrder[bid]} acceptable?")
-            if not getTF(pos1):
+        if getBiddingOkay(pos2, biddingOrder[bid]):
+            if not getBiddingOkay(pos1, biddingOrder[bid]):
                 while True:
                     bid+=1
                     #ask pos3 and pos2 after pos1 is out
-                    print(f"{pos3.name} is {biddingOrder[bid]} acceptable?")
-                    if getTF(pos3):
-                        print(f"{pos2.name} is {biddingOrder[bid]} acceptable?")
-                        if not getTF(pos2):
-                            return pos3
+                    if getBiddingOkay(pos3, biddingOrder[bid]):
+                        if not getBiddingOkay(pos2, biddingOrder[bid]):
+                            return bid,pos3
                     else:
-                        return pos2
+                        return bid-1,pos2
         else:
             bid-=1
             while True:
                 bid+=1
                 #ask pos3 and pos1 after pos2 is out
-                print(f"{pos3.name} is {biddingOrder[bid]} acceptable?")
-                if getTF(pos3):
-                    print(f"{pos1.name} is {biddingOrder[bid]} acceptable?")
-                    if not getTF(pos1):
-                        return pos3
+                if getBiddingOkay(pos3, biddingOrder[bid]):
+                    if not getBiddingOkay(pos1, biddingOrder[bid]):
+                        return bid,pos3
                 else:
                     if bid==0:
-                        print(f"{pos1.name} is {biddingOrder[bid]} acceptable?")
-                        if not getTF(pos1):
+                        if getBiddingOkay(pos1, biddingOrder[bid]):
                             return
-                    return pos1
+                    return bid-1, pos1
 
                     
+def getGameType(solo, hand):
+    good = False
+    while not good:
+        gametype = input(f"{solo} what kind of game would you like to play?\nE\nG\nR\nS\nGrand\nNull\n")
+        if gametype in {"E", "G", "R", "S", "Grand", "Null"}:
+            good = True
+    
 
 
 
@@ -135,8 +128,14 @@ def bidding(pos1,pos2,pos3):
 def playGame(deck, pos1, pos2, pos3):
     print("starting game")
     deal(deck,pos1,pos2,pos3)
-    soloPlayer = bidding(pos1,pos2,pos3)
-    print(soloPlayer)
+    winningBid, soloPlayer = bidding(pos1,pos2,pos3)
+    if soloPlayer == None:
+        print("No one wants to be the solo-player, so no game.")
+        return
+    print(f"{soloPlayer} is the solo player with a winning bid of {biddingOrder[winningBid]}.")
+    #gameType = getGameType(soloPlayer)
+
+    
 
 
 playGame(allCards, player1, player2,player3)
