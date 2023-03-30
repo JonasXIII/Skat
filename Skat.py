@@ -1,4 +1,4 @@
-from client import *
+from playerHelper import *
 import random
 
 class Card: 
@@ -108,7 +108,7 @@ def bidding(pos1,pos2,pos3):
                 else:
                     if bid==0:
                         if getBiddingOkay(pos1, biddingOrder[bid]):
-                            return
+                            return bid, pos1
                     return bid-1, pos1
 
                     
