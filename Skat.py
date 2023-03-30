@@ -1,4 +1,4 @@
-from client import *
+from playerIO import *
 import random
 
 class Card: 
