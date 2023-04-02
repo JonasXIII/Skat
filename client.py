@@ -3,14 +3,20 @@ import socket
 
 
 def main():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("localhost", 8000))
-    data = s.recv(1024).decode()
-    print(data)
-    s.sendall()
+    conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    conn.connect(("localhost", 8000))
+    
+    recv(conn)
+    recv(conn)
+    recv(conn)
 
-    while True:
-        n=1
+
+
+
+def recv(conn):
+    data = conn.recv(1024).decode()
+    print(data)
+
 
 if __name__ == "__main__":
     main()

@@ -8,5 +8,4 @@ def getBiddingOkay(player, biddingNum):
         
 def getSuitToPlay(player):
     while True:
-        answer = input(f"{player.name} what would you like trump to be? 
-        {{1:Blue}} {{2:Green}} {{3:Red}} {{4:Yellow}} {{5:Grand}} {{6:Null}}")
+        answer = input(f"{player.name} what would you like trump to be? {{1:Blue}} {{2:Green}} {{3:Red}} {{4:Yellow}} {{5:Grand}} {{6:Null}}")

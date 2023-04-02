@@ -24,7 +24,13 @@ class Player:
         return self.name
     def __repr__(self):
         return self.name
-    
+    def getHand(self):
+        ret = ""
+        for card in self.hand:
+            ret += card.name + ","
+        return ret[:-1]
+
+
 biddingOrder = [18, 20, 22, 23, 24, 27, 30, 33, 35, 36, 40, 44, 45, 46, 48, 50, 54, 55, 59, 60, 63, 66, 70, 72, 77, 80, 81, 84, 88, 90, 96, 99, 100, 108, 110, 117, 120, 121, 126, 130, 132, 135, 140, 143, 144, 150, 153, 154, 160, 162, 165, 168, 170, 171, 176, 180, 187, 
 189, 190, 192, 198, 200, 207, 209, 210, 216, 220, 225, 230, 231, 234, 240, 242, 243, 250]
 allCards = [Card("\u001b[34m7\u001b[0m", 'e', '7', 0, 21), Card("\u001b[34m8\u001b[0m", 'e', '8', 0, 22), Card("\u001b[34m9\u001b[0m", 'e', '9', 0, 23), 
@@ -58,10 +64,10 @@ def deal(cards,pos1,pos2,pos3):
     pos1.hand.sort(key=comp)
     pos2.hand.sort(key=comp)
     pos3.hand.sort(key=comp)
-    pos1.printHand()
-    pos2.printHand()
-    pos3.printHand()
-    print(skat)
+    #pos1.printHand()
+    #pos2.printHand()
+    #pos3.printHand()
+    #print(skat)
 
 def dealHand(cards, person):
     if person == 3:
@@ -138,4 +144,4 @@ def playGame(deck, pos1, pos2, pos3):
     
 
 
-playGame(allCards, player1, player2,player3)
+#playGame(allCards, player1, player2,player3)
