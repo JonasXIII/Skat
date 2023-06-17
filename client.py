@@ -1,14 +1,15 @@
 import socket
+import time
 
 name = ""
 
 def main():
-    conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    conn.connect(("localhost", 8000))
     
-    connected(conn)
-    recv(conn)
-    recv(conn)
+    
+    get_connected()
+    recv()
+    recv()
+    time.sleep(1000)
 
 
 
@@ -16,11 +17,15 @@ def main():
 def bidding():
     pass
 
-def connected(conn):
-    name = conn.recv(1024).decode()
-    print(f"Connection to server succesful, you are {name}.")
+def get_connected():
+    global conn
+    conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    conn.connect(("localhost", 8000))
+    name = input("What would you like to be called?")[:-1]
+    print()
+    conn.sendall(name.encode())
 
-def recv(conn):
+def recv():
     data = conn.recv(1024).decode()
     print(data)
 

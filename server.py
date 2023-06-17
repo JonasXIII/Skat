@@ -1,32 +1,37 @@
 import socket
+import time
 from Skat import *
 
-global s
-global conn1, addr1
-global conn2, addr2
-global conn3, addr3
+
+
 
 def main(): 
 
     build_connections()
+    
     play_round()
+    time.sleep(1000)
+
 
     
 
 def build_connections():
+    global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(("localhost", 8000))
     s.listen()
     print("Waiting for connections...")
-    
+    global conn1, addr1, name1
+    global conn2, addr2, name2
+    global conn3, addr3, name3
     conn1, addr1= s.accept()
-    connected(conn1,addr1, "Silke")
+    name1 = connected(conn1,addr1)
     conn2, addr2 = s.accept()
-    connected(conn2,addr2, "Jork")
+    name2 = connected(conn2,addr2)
     conn3, addr3 = s.accept()
-    connected(conn3,addr3, "Jonas")
+    name3 = connected(conn3,addr3)
     
-    tellAll(conn1,conn2,conn3,"Wellcome to Skat, three people have successfully connected.")
+    tellAll(conn1,conn2,conn3,"Three people have successfully connected. Here we go!")
 
 def deal_cards():
     deal(allCards, player1, player2,player3)
@@ -54,16 +59,18 @@ def sendHand(conn, player):
     conn.sendall(msg.encode())
 
 
-def connected(conn, addr, name):
+def connected(conn, addr):
     print(f"Player connected from {addr}")
-    msg = name #+ ", you have succesfully conneted to server."
+    name = conn.recv(1024).decode()
+    msg = name + ", you have succesfully conneted to server."
     conn.sendall(msg.encode())
-    #conn.sendall(b"Connected to server, you are ")
+    return name
 
 def tellAll(conn1,conn2,conn3,msg):
     conn1.sendall(msg.encode())
     conn2.sendall(msg.encode())
     conn3.sendall(msg.encode())
+    print(msg)
 
 
 if __name__ == "__main__":
