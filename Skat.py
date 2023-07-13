@@ -1,5 +1,8 @@
 from playerIO import *
 import random
+from colorama import init
+
+init()
 
 class Card: 
     def __init__(self, name, suit, rank, eyes, id):
@@ -38,9 +41,9 @@ allCards = [
     Card("\u001b[33mO\u001b[0m", 's', 'O', 3, 3), Card("\u001b[33mK\u001b[0m", 's', 'K', 4, 4), Card("\u001b[33m1\u001b[0m", 's', '1', 10, 5), 
     Card("\u001b[33mA\u001b[0m", 's', 'A', 11, 6),
     
-    Card("\u001b[31m7\u001b[0m", 'r', '7', 0, 7), Card("\u001b[31m8\u001b[0m", 'r', '8', 0, 8), Card("\u001b[31m9\u001b[0m", 'r', '9', 0, 9), 
-    Card("\u001b[31mO\u001b[0m", 'r', 'O', 3, 10), Card("\u001b[31mK\u001b[0m", 'r', 'K', 4, 11), Card("\u001b[31m1\u001b[0m", 'r', '1', 10, 12), 
-    Card("\u001b[31mA\u001b[0m", 'r', 'A', 11, 13),
+    Card("\033[91m7\u001b[0m", 'r', '7', 0, 7), Card("\033[91m8\u001b[0m", 'r', '8', 0, 8), Card("\033[91m9\u001b[0m", 'r', '9', 0, 9), 
+    Card("\033[91mO\u001b[0m", 'r', 'O', 3, 10), Card("\033[91mK\u001b[0m", 'r', 'K', 4, 11), Card("\033[91m1\u001b[0m", 'r', '1', 10, 12), 
+    Card("\033[91mA\u001b[0m", 'r', 'A', 11, 13),
 
     Card("\u001b[32m7\u001b[0m", 'g', '7', 0, 14), Card("\u001b[32m8\u001b[0m", 'g', '8', 0, 15), Card("\u001b[32m9\u001b[0m", 'g', '9', 0, 16), 
     Card("\u001b[32mO\u001b[0m", 'g', 'O', 3, 17), Card("\u001b[32mK\u001b[0m", 'g', 'K', 4, 18), Card("\u001b[32m1\u001b[0m", 'g', '1', 10, 19), 
@@ -50,7 +53,7 @@ allCards = [
     Card("\u001b[34mO\u001b[0m", 'e', 'O', 3, 24), Card("\u001b[34mK\u001b[0m", 'e', 'K', 4, 25), Card("\u001b[34m1\u001b[0m", 'e', '1', 10, 26), 
     Card("\u001b[34mA\u001b[0m", 'e', 'A', 11, 27),
     
-    Card("\u001b[33mU\u001b[0m", 's', 'U', 2, 28),Card("\u001b[31mU\u001b[0m", 'r', 'U', 2, 29),
+    Card("\u001b[33mU\u001b[0m", 's', 'U', 2, 28),Card("\033[91mU\u001b[0m", 'r', 'U', 2, 29),
     Card("\u001b[32mU\u001b[0m", 'g', 'U', 2, 30),Card("\u001b[34mU\u001b[0m", 'e', 'U', 2, 31), 
 ]
 
@@ -151,4 +154,4 @@ def playGame(deck, pos1, pos2, pos3):
     
 
 
-playGame(allCards, player1, player2,player3)
+# playGame(allCards, player1, player2,player3)

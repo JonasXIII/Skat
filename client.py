@@ -4,6 +4,7 @@ import time
 name = ""
 
 def main():
+    print("Welcome to Skat!")
     
     
     get_connected()

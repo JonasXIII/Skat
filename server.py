@@ -6,6 +6,7 @@ from Skat import *
 
 
 def main(): 
+    print("Welcome to Skat!")
 
     build_connections()
     

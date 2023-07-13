@@ -1,5 +1,6 @@
 @echo off
 
 (
-    echo Jonas
-)| python client.py
+    echo Hello
+)| python server.py
+
