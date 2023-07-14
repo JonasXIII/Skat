@@ -4,12 +4,14 @@ from Skat import *
 
 
 
-
 def main(): 
     print("Welcome to Skat!")
 
     build_connections()
-    
+
+    global Skat
+    Skat = []
+
     play_round()
     time.sleep(1000)
 
@@ -22,24 +24,38 @@ def build_connections():
     s.bind(("localhost", 8000))
     s.listen()
     print("Waiting for connections...")
-    global conn1, addr1, name1
-    global conn2, addr2, name2
-    global conn3, addr3, name3
+    global conn1, addr1, player1
+    global conn2, addr2, player2
+    global conn3, addr3, player3
     conn1, addr1= s.accept()
-    name1 = connected(conn1,addr1)
     conn2, addr2 = s.accept()
-    name2 = connected(conn2,addr2)
     conn3, addr3 = s.accept()
-    name3 = connected(conn3,addr3)
+
+    player1 = Player(conn1.recv(1024).decode())
+    player2 = Player(conn2.recv(1024).decode())
+    player3 = Player(conn3.recv(1024).decode())
+
+    print("Name 1 = "+player1.name)
+    print("Name 2 = "+player2.name)
+    print("Name 3 = "+player3.name)
     
-    tellAll(conn1,conn2,conn3,"Three people have successfully connected. Here we go!")
+
+
 
 def deal_cards():
-    deal(allCards, player1, player2,player3)
+    Skat = []
+    Skat.append(deal(allCards, player1, player2,player3))
     
-    sendHand(conn1, player1)
-    sendHand(conn2, player2)
-    sendHand(conn3, player3)
+    tellAll("deal")
+
+    conn1.sendall(",".join(str(id) for id in [card.id for card in player1.hand]).encode())
+    conn2.sendall(",".join(str(id) for id in [card.id for card in player2.hand]).encode())
+    conn3.sendall(",".join(str(id) for id in [card.id for card in player3.hand]).encode())
+
+
+    print("Hands sent")
+    for card in Skat:
+        print(card)
 
 def play_round():
     for i in range(3):
@@ -54,11 +70,6 @@ def play():
 def report_hand_results():
     pass
 
-def sendHand(conn, player):
-    msg = player.name+" your hand is "+ player.getHand()
-    print(f"Sending: {msg}")
-    conn.sendall(msg.encode())
-
 
 def connected(conn, addr):
     print(f"Player connected from {addr}")
@@ -67,7 +78,7 @@ def connected(conn, addr):
     conn.sendall(msg.encode())
     return name
 
-def tellAll(conn1,conn2,conn3,msg):
+def tellAll(msg):
     conn1.sendall(msg.encode())
     conn2.sendall(msg.encode())
     conn3.sendall(msg.encode())

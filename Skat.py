@@ -33,6 +33,12 @@ class Player:
             ret += card.name + ","
         return ret[:-1]
 
+def get_card(id):
+    for card in allCards:
+        if card.id == int(id):
+            return card
+    return id
+
 
 biddingOrder = [18, 20, 22, 23, 24, 27, 30, 33, 35, 36, 40, 44, 45, 46, 48, 50, 54, 55, 59, 60, 63, 66, 70, 72, 77, 80, 81, 84, 88, 90, 96, 99, 100, 108, 110, 117, 120, 121, 126, 130, 132, 135, 140, 143, 144, 150, 153, 154, 160, 162, 165, 168, 170, 171, 176, 180, 187, 
 189, 190, 192, 198, 200, 207, 209, 210, 216, 220, 225, 230, 231, 234, 240, 242, 243, 250]
@@ -57,43 +63,31 @@ allCards = [
     Card("\u001b[32mU\u001b[0m", 'g', 'U', 2, 30),Card("\u001b[34mU\u001b[0m", 'e', 'U', 2, 31), 
 ]
 
-player1 = Player("Silke")
-player2 = Player("Jork")
-player3 = Player("Jonas")
-skat = []
 
 def comp(card):
     return card.id
 
-def deal(cards,pos1,pos2,pos3):
+def deal(cards,player1,player2,player3):
+    
+    player1.hand = []
+    player2.hand = []
+    player3.hand = []
+    skat = []
     random.shuffle(cards)
-    dealHand(cards, 0)
-    dealHand(cards, 1)
-    dealHand(cards, 2)
-    dealHand(cards, 3)
-    pos1.hand.sort(key=comp)
-    pos2.hand.sort(key=comp)
-    pos3.hand.sort(key=comp)
-    #pos1.printHand()
-    #pos2.printHand()
-    #pos3.printHand()
-    #print(skat)
-
-def dealHand(cards, person):
-    if person == 3:
-        skat.append(cards[30])
-        skat.append(cards[31])
-    if(person==0):
-        for i in range(10):
-            player1.hand.append(cards[i])
-    if(person==1):
-        for i in range(10):
-            player2.hand.append(cards[i+10])
-    if(person==2):
-        for i in range(10):
-            player3.hand.append(cards[i+20])
-
-
+    for i, card in enumerate(cards):
+        if i < 10:
+            player1.hand.append(card)
+        elif i < 20:
+            player2.hand.append(card)
+        elif i < 30:
+            player3.hand.append(card)
+        else:
+            skat.append(card)
+    
+    player1.hand.sort(key=comp)
+    player2.hand.sort(key=comp)
+    player3.hand.sort(key=comp)
+    return skat
 
 def bidding(pos1,pos2,pos3):
     in1 = True
