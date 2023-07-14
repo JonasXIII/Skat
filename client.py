@@ -13,7 +13,7 @@ def main():
 
         if next_thing == "deal":
             recieve_hand()
-        elif next_thing == "bid":
+        elif next_thing == "bidding":
             bidding()
         
 

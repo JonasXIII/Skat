@@ -18,9 +18,12 @@ class Card:
         return self.name
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, conn, addr):
         self.name = name
         self.hand = []
+        self.conn = conn
+        self.addr = addr
+
     def printHand(self):
         print(f"{self.name} has a hand of {self.hand}")
     def __str__(self):
@@ -89,37 +92,7 @@ def deal(cards,player1,player2,player3):
     player3.hand.sort(key=comp)
     return skat
 
-def bidding(pos1,pos2,pos3):
-    in1 = True
-    in2 = True
-    in3 = True
-    bid = -1
-    while True:
-        bid+=1
-        #ask pos2 and pos 1 if they will bid next bid
-        if getBiddingOkay(pos2, biddingOrder[bid]):
-            if not getBiddingOkay(pos1, biddingOrder[bid]):
-                while True:
-                    bid+=1
-                    #ask pos3 and pos2 after pos1 is out
-                    if getBiddingOkay(pos3, biddingOrder[bid]):
-                        if not getBiddingOkay(pos2, biddingOrder[bid]):
-                            return bid,pos3
-                    else:
-                        return bid-1,pos2
-        else:
-            bid-=1
-            while True:
-                bid+=1
-                #ask pos3 and pos1 after pos2 is out
-                if getBiddingOkay(pos3, biddingOrder[bid]):
-                    if not getBiddingOkay(pos1, biddingOrder[bid]):
-                        return bid,pos3
-                else:
-                    if bid==0:
-                        if getBiddingOkay(pos1, biddingOrder[bid]):
-                            return
-                    return bid-1, pos1
+
 
                     
 def getGameType(solo, hand):
