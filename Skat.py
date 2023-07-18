@@ -25,7 +25,7 @@ class Player:
         self.addr = addr
 
     def printHand(self):
-        print(f"{self.name} has a hand of {self.hand}")
+        print(f"{self.hand}")
     def __str__(self):
         return self.name
     def __repr__(self):
