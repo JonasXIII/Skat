@@ -15,7 +15,9 @@ def main():
         elif next_thing == "bidding":
             bidding()
         
-
+def send_msg(msg):
+    message_length = len(msg)
+    player.conn.sendall(message_length.to_bytes(4, byteorder='big') + msg.encode())
 
 def recieve_hand():
     ids = recv()
@@ -23,17 +25,19 @@ def recieve_hand():
     player.printHand()
 
 def bidding():
+    print("Bidding started.")
     while True:
         next = recv()
         if next == "bid":
             bid = int(recv())
             while True: 
                 okay = input(f"{player.name}, do you want to bid {bid}? (y/n) ")
-                if okay == "y":
-                    player.conn.sendall("okay".encode())
+                print()
+                if okay == "y" or okay == "y ":
+                    send_msg("okay")
                     break
-                elif okay == "n":
-                    player.conn.sendall("no".encode())
+                elif okay == "n" or okay == "n ":
+                    send_msg("no")
                     break
                 else:
                     print("Invalid input.") 
@@ -60,11 +64,11 @@ def get_connected():
     player = Player(input("What would you like to be called? "), conn, 0)
     name = player.name
     print()
-    player.conn.sendall(name.encode())
+    send_msg(name)
 
 def recv():
-    data = player.conn.recv(1024).decode()
-    return data
+    message_length = int.from_bytes(player.conn.recv(4), byteorder='big')
+    return player.conn.recv(message_length).decode()
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import socket
 import time
 from Skat import *
 
-
+players = []
 
 def main(): 
     print("Welcome to Skat!")
@@ -24,32 +24,30 @@ def build_connections():
     s.bind(("localhost", 8000))
     s.listen()
     print("Waiting for connections...")
-    global player1
-    global player2
-    global player3
     conn1, addr1= s.accept()
     conn2, addr2 = s.accept()
     conn3, addr3 = s.accept()
 
-    player1 = Player(conn1.recv(1024).decode(), conn1, addr1)
-    player2 = Player(conn2.recv(1024).decode(), conn2, addr2)
-    player3 = Player(conn3.recv(1024).decode(), conn3, addr3)
+    players.append(Player(conn1.recv(1024).decode(), conn1, addr1))
+    players.append (Player(conn2.recv(1024).decode(), conn2, addr2))
+    players.append(Player(conn3.recv(1024).decode(), conn3, addr3))
+    players.sort(key=lambda player: player.name)
 
-    print("Name 1 = "+player1.name)
-    print("Name 2 = "+player2.name)
-    print("Name 3 = "+player3.name)
+    print("Name 1 = "+players[0].name)
+    print("Name 2 = "+players[1].name)
+    print("Name 3 = "+players[2].name)
     
 
 
 
 def deal_cards():
     Skat = []
-    Skat.append(deal(allCards, player1, player2,player3))
+    Skat.append(deal(allCards, players[0], players[1],players[2]))
     
     tellAll("deal")
-    player1.conn.sendall(",".join(str(id) for id in [card.id for card in player1.hand]).encode())
-    player2.conn.sendall(",".join(str(id) for id in [card.id for card in player2.hand]).encode())
-    player3.conn.sendall(",".join(str(id) for id in [card.id for card in player3.hand]).encode())
+    send_msg(",".join(str(id) for id in [card.id for card in players[0].hand]), players[0])
+    send_msg(",".join(str(id) for id in [card.id for card in players[1].hand]), players[1])
+    send_msg(",".join(str(id) for id in [card.id for card in players[2].hand]), players[2])
 
 
     print("Hands sent")
@@ -64,30 +62,33 @@ def play_round():
         report_hand_results()
 def bid():
     global highest_bid
-    highest_bid, solo_player = bidding(player1, player2, player3)
+    highest_bid, solo_player = bidding(players[0], players[1], players[1])
 def play():
     pass
 def report_hand_results():
     pass
 
 
-def connected(conn, addr):
-    print(f"Player connected from {addr}")
-    name = conn.recv(1024).decode()
-    msg = name + ", you have succesfully conneted to server."
-    conn.sendall(msg.encode())
-    return name
 
 def tellAll(msg):
-    player1.conn.sendall(msg.encode())
-    player2.conn.sendall(msg.encode())
-    player3.conn.sendall(msg.encode())
-    print(msg)
+    send_msg(msg, players[0])
+    send_msg(msg, players[1])
+    send_msg(msg, players[2])
+
+
+def send_msg(msg, player):
+    message_length = len(msg)
+    player.conn.sendall(message_length.to_bytes(4, byteorder='big') + msg.encode())
+
+def recv(player):
+    message_length = int.from_bytes(player.conn.recv(4), byteorder='big')
+    return player.conn.recv(message_length).decode()
 
 def getBiddingOkay(player, bid):
-    player.conn.sendall("bid".encode())
-    player.conn.sendall(str(bid).encode())
-    return player.conn.recv(1024).decode() == "okay"
+    print (f"asking {player.name} if they want to bid {bid}")
+    send_msg("bid", player)
+    send_msg(str(bid), player)
+    return recv(player) == "okay"
 
 def bidding_winner(player, bid):
     tellAll("winning_bid")
@@ -101,6 +102,7 @@ def bidding_info(player, bid):
 
 def bidding(pos1, pos2, pos3):
     tellAll("bidding")
+    print("anounced bidding")
     in1 = True
     in2 = True
     in3 = True

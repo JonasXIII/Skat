@@ -5,5 +5,8 @@ echo Jork
 echo y
 echo y 
 echo y
-echo n
+echo y
+echo y
+echo y
+echo y
 )| python client.py
