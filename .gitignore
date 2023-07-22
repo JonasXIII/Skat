@@ -1,2 +1,7 @@
-__pycache__/client.cpython-311.pyc
-__pycache__/client.cpython-310.pyc
+__pycache__/playerIO.cpython-39.pyc
+__pycache__/Skat.cpython-39.pyc
+Skat.py
+.gitignore
+__pycache__/playerIO.cpython-311.pyc
+.gitignore
+__pycache__/Skat.cpython-311.pyc
