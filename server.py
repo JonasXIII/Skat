@@ -16,8 +16,6 @@ def main():
     time.sleep(1000)
 
 
-    
-
 def build_connections():
     global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -62,7 +60,7 @@ def play_round():
         report_hand_results()
 def bid():
     global highest_bid
-    highest_bid, solo_player = bidding(players[0], players[1], players[1])
+    highest_bid, solo_player = bidding(players[0], players[1], players[2])
 def play():
     pass
 def report_hand_results():
