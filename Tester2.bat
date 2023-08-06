@@ -2,8 +2,8 @@
 
 (
 echo Silke
-echo y
-echo y
-echo y
 echo n
+echo 9
+echo 7
+echo 4
 )| python client.py

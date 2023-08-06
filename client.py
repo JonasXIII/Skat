@@ -14,6 +14,8 @@ def main():
             recieve_hand()
         elif next_thing == "bidding":
             bidding()
+        elif next_thing == "play_hand":
+            play_hand()
         
 def send_msg(msg):
     message_length = len(msg)
@@ -22,6 +24,66 @@ def send_msg(msg):
 def recv():
     message_length = int.from_bytes(player.conn.recv(4), byteorder='big')
     return player.conn.recv(message_length).decode()
+
+def play_hand():
+    print("Playing hand.")
+    while True:
+        next = recv()
+        if next == "play_card":
+            msg = "What card would you like to play? \n"
+            for i in player.hand:
+                msg.join(f"{i}: {player.hand[i]} \n")
+            card = input(msg)
+            send_msg(card)
+        elif next == "info":
+            player_name = recv()
+            card = recv()
+            print(f"{player_name} played {card}.")
+        elif next == "winning_card":
+            winning_card = recv()
+            winning_card_player = recv()
+            print(f"The winning card is {winning_card} by {winning_card_player}.")
+        elif next == "trick_winner":
+            trick_winner = recv()
+            print(f"{trick_winner} won the trick.")
+        elif next == "hand_winner":
+            hand_winner = recv()
+            print(f"{hand_winner} won the hand.")
+            return
+        elif next == "trick":
+            trick = recv()
+            print(f"Trick {trick}:")
+        elif next == "trick_info":
+            player_name = recv()
+            card = recv()
+            print(f"{player_name} played {card}.")
+        elif next == "hand_info":
+            player_name = recv()
+            card = recv()
+            print(f"{player_name} has {card} cards left.")
+        elif next == "hand":
+            hand = recv()
+            print(f"Your hand is {hand}.")
+        elif next == "trump":
+            trump = recv()
+            print(f"The trump suit is {trump}.")
+        elif next == "hand_trump":
+            hand_trump = recv()
+            print(f"Your hand and the trump suit is {hand_trump}.")
+        elif next == "hand_trick":
+            hand_trick = recv()
+            print(f"Your hand and the trick is {hand_trick}.")
+        elif next == "hand_trump_trick":
+            hand_trump_trick = recv()
+            print(f"Your hand, the trump suit, and the trick is {hand_trump_trick}.")
+        elif next == "hand_trump_trick_winner":
+            hand_trump_trick_winner = recv()
+            print(f"Your hand, the trump suit, the trick, and the winning card is {hand_trump_trick_winner}.")
+        elif next == "hand_trump_trick_winner_info":
+            player_name = recv()
+            card = recv()
+            print(f"{player_name} played {card}.")
+
 
 def recieve_hand():
     ids = recv()
@@ -59,6 +121,7 @@ def bidding():
             winning_bid = recv()
             winning_bid_player = recv()
             print(f"The winning bid is {winning_bid} by {winning_bid_player}.")
+            return
 
 def get_connected():
     global player

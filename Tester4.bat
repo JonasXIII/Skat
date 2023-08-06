@@ -3,7 +3,7 @@
 (
     echo Jonas
     echo y
-    echo y
-    echo y
-    echo n
+    echo 6
+    echo 7
+    echo 8
 )| python client.py

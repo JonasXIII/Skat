@@ -55,30 +55,48 @@ def deal_cards():
 def play_round():
     for i in range(1):
         deal_cards()
-        bid()
-        play()
+        winning_bid, solo_playuer = bid()
+        play(solo_playuer)
         report_hand_results()
 def bid():
     global highest_bid
     highest_bid, solo_player = bidding(players[0], players[1], players[2])
-def play():
-    pass
+    return highest_bid, solo_player
 
-def polay_trick(StartPlayer):
-    send_msg("play_trick", players[StartPlayer])
+def play(solo_player):
+    tellAll("play_hand")
+    solo_player_pos = players.index(solo_player)
+    play_trick(solo_player_pos)
+
+def play_trick(StartPlayer):
+    send_msg("play_card", players[StartPlayer])
     cardplayed = players[StartPlayer].hand.pop(int(recv(players[StartPlayer])))
-    send_msg("{players[StartPlayer].name} played {cardplayed}}", players[(StartPlayer+1)%3])
-    send_msg("{players[StartPlayer].name} played {cardplayed}}", players[(StartPlayer+2)%3])
+    send_msg("info", players[(StartPlayer+1)%3])
+    send_msg("info", players[(StartPlayer+2)%3])
+    send_msg("{players[StartPlayer].name}", players[(StartPlayer+1)%3])
+    send_msg("{players[StartPlayer].name}", players[(StartPlayer+2)%3])
+    send_msg("{cardplayed}", players[(StartPlayer+1)%3])
+    send_msg("{cardplayed}", players[(StartPlayer+2)%3])
     
-    send_msg("play_trick", players[(StartPlayer+1)%3])
+    send_msg("play_card", players[(StartPlayer+1)%3])
     cardplayed = players[(StartPlayer+1)%3].hand.pop(int(recv(players[(StartPlayer+1)%3])))
-    send_msg("{players[(StartPlayer+1)%3].name} played {cardplayed}}", players[(StartPlayer+2)%3])
-    send_msg("{players[(StartPlayer+1)%3].name} played {cardplayed}}", players[StartPlayer])
+    send_msg("info", players[(StartPlayer+2)%3])
+    send_msg("info", players[StartPlayer])
+    send_msg("{players[(StartPlayer+1)%3].name}", players[(StartPlayer+2)%3])
+    send_msg("{players[(StartPlayer+1)%3].name}", players[StartPlayer])
+    send_msg("{cardplayed}", players[(StartPlayer+2)%3])
+    send_msg("{cardplayed}", players[StartPlayer])
 
-    send_msg("play_trick", players[(StartPlayer+2)%3])
+    send_msg("play_card", players[(StartPlayer+2)%3])
     cardplayed = players[(StartPlayer+2)%3].hand.pop(int(recv(players[(StartPlayer+2)%3])))
-    send_msg("{players[(StartPlayer+2)%3].name} played {cardplayed}}", players[StartPlayer])
-    send_msg("{players[(StartPlayer+2)%3].name} played {cardplayed}}", players[(StartPlayer+1)%3])
+    send_msg("info", players[StartPlayer])
+    send_msg("info", players[(StartPlayer+1)%3])
+    send_msg("{players[(StartPlayer+2)%3].name}", players[StartPlayer])
+    send_msg("{players[(StartPlayer+2)%3].name}", players[(StartPlayer+1)%3])
+    send_msg("{cardplayed}", players[StartPlayer])
+    send_msg("{cardplayed}", players[(StartPlayer+1)%3])
+
+
 
 def report_hand_results():
     pass
