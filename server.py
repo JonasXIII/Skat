@@ -63,6 +63,23 @@ def bid():
     highest_bid, solo_player = bidding(players[0], players[1], players[2])
 def play():
     pass
+
+def polay_trick(StartPlayer):
+    send_msg("play_trick", players[StartPlayer])
+    cardplayed = players[StartPlayer].hand.pop(int(recv(players[StartPlayer])))
+    send_msg("{players[StartPlayer].name} played {cardplayed}}", players[(StartPlayer+1)%3])
+    send_msg("{players[StartPlayer].name} played {cardplayed}}", players[(StartPlayer+2)%3])
+    
+    send_msg("play_trick", players[(StartPlayer+1)%3])
+    cardplayed = players[(StartPlayer+1)%3].hand.pop(int(recv(players[(StartPlayer+1)%3])))
+    send_msg("{players[(StartPlayer+1)%3].name} played {cardplayed}}", players[(StartPlayer+2)%3])
+    send_msg("{players[(StartPlayer+1)%3].name} played {cardplayed}}", players[StartPlayer])
+
+    send_msg("play_trick", players[(StartPlayer+2)%3])
+    cardplayed = players[(StartPlayer+2)%3].hand.pop(int(recv(players[(StartPlayer+2)%3])))
+    send_msg("{players[(StartPlayer+2)%3].name} played {cardplayed}}", players[StartPlayer])
+    send_msg("{players[(StartPlayer+2)%3].name} played {cardplayed}}", players[(StartPlayer+1)%3])
+
 def report_hand_results():
     pass
 
@@ -72,6 +89,7 @@ def tellAll(msg):
     send_msg(msg, players[0])
     send_msg(msg, players[1])
     send_msg(msg, players[2])
+
 
 
 def send_msg(msg, player):
