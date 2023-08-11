@@ -1,5 +1,4 @@
 from playerIO import *
-import random
 from colorama import init
 
 init()
@@ -37,15 +36,15 @@ class Player:
         return ret[:-1]
 
 def get_card(id):
-    for card in allCards:
+    for card in ALL_CARDS:
         if card.id == int(id):
             return card
     return id
 
 
-biddingOrder = [18, 20, 22, 23, 24, 27, 30, 33, 35, 36, 40, 44, 45, 46, 48, 50, 54, 55, 59, 60, 63, 66, 70, 72, 77, 80, 81, 84, 88, 90, 96, 99, 100, 108, 110, 117, 120, 121, 126, 130, 132, 135, 140, 143, 144, 150, 153, 154, 160, 162, 165, 168, 170, 171, 176, 180, 187, 
+BIDDING_ORDER = [18, 20, 22, 23, 24, 27, 30, 33, 35, 36, 40, 44, 45, 46, 48, 50, 54, 55, 59, 60, 63, 66, 70, 72, 77, 80, 81, 84, 88, 90, 96, 99, 100, 108, 110, 117, 120, 121, 126, 130, 132, 135, 140, 143, 144, 150, 153, 154, 160, 162, 165, 168, 170, 171, 176, 180, 187, 
 189, 190, 192, 198, 200, 207, 209, 210, 216, 220, 225, 230, 231, 234, 240, 242, 243, 250]
-allCards = [    
+ALL_CARDS = [    
     Card("\u001b[33m7\u001b[0m", 's', '7', 0, 0), Card("\u001b[33m8\u001b[0m", 's', '8', 0, 1), Card("\u001b[33m9\u001b[0m", 's', '9', 0, 2), 
     Card("\u001b[33mO\u001b[0m", 's', 'O', 3, 3), Card("\u001b[33mK\u001b[0m", 's', 'K', 4, 4), Card("\u001b[33m1\u001b[0m", 's', '1', 10, 5), 
     Card("\u001b[33mA\u001b[0m", 's', 'A', 11, 6),
@@ -67,30 +66,6 @@ allCards = [
 ]
 
 
-def comp(card):
-    return card.id
-
-def deal(cards,player1,player2,player3):
-    
-    player1.hand = []
-    player2.hand = []
-    player3.hand = []
-    skat = []
-    random.shuffle(cards)
-    for i, card in enumerate(cards):
-        if i < 10:
-            player1.hand.append(card)
-        elif i < 20:
-            player2.hand.append(card)
-        elif i < 30:
-            player3.hand.append(card)
-        else:
-            skat.append(card)
-    
-    player1.hand.sort(key=comp)
-    player2.hand.sort(key=comp)
-    player3.hand.sort(key=comp)
-    return skat
 
 
 

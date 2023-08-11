@@ -1,8 +1,10 @@
 import socket
 import time
 from Skat import *
+from cardDealer import *
 
 players = []
+trump_suit = 'n'
 
 def main(): 
     print("Welcome to Skat!")
@@ -40,7 +42,7 @@ def build_connections():
 
 def deal_cards():
     Skat = []
-    Skat.append(deal(allCards, players[0], players[1],players[2]))
+    Skat.append(deal(ALL_CARDS, players[0], players[1],players[2], 11))
     
     tellAll("deal")
     send_msg(",".join(str(id) for id in [card.id for card in players[0].hand]), players[0])
@@ -65,36 +67,66 @@ def bid():
 
 def play(solo_player):
     tellAll("play_hand")
-    solo_player_pos = players.index(solo_player)
-    play_trick(solo_player_pos)
+    solo_player_pos = 0
+    leadPlayer = solo_player_pos
+    for i in range(10):
+        leadPlayer = play_trick(leadPlayer)
+
+
+def tell_A_B_played_card(A, B, card):
+    send_msg("info", A)
+    send_msg(B.name, A)
+    send_msg(card.name, A)
+
+def getWinner(card1, card2, card3, trump):
+    print(f"cards are {card1.name}, {card2.name}, {card3.name}")
+    card1Value = card1.id
+    card2Value = card2.id
+    card3Value = card3.id
+    if card1.suit == trump or card1.rank == "U":
+        card1Value += 80
+    elif card1.suit == card1.suit:
+        card1Value += 40
+    if card2.suit == trump or card2.rank == "U":
+        card2Value += 80
+    elif card2.suit == card1.suit:
+        card2Value += 40
+    if card3.suit == trump or card3.rank == "U":
+        card3Value += 80
+    elif card3.suit == card1.suit:
+        card3Value += 40
+    if max(card1Value, card2Value, card3Value) == card1Value:
+        print("card1 wins")
+        return 0
+    elif max(card1Value, card2Value, card3Value) == card2Value:
+        print("card2 wins")
+        return 1
+    else:
+        print("card3 wins")
+        return 2
+
+
 
 def play_trick(StartPlayer):
     send_msg("play_card", players[StartPlayer])
-    cardplayed = players[StartPlayer].hand.pop(int(recv(players[StartPlayer])))
-    send_msg("info", players[(StartPlayer+1)%3])
-    send_msg("info", players[(StartPlayer+2)%3])
-    send_msg("{players[StartPlayer].name}", players[(StartPlayer+1)%3])
-    send_msg("{players[StartPlayer].name}", players[(StartPlayer+2)%3])
-    send_msg("{cardplayed}", players[(StartPlayer+1)%3])
-    send_msg("{cardplayed}", players[(StartPlayer+2)%3])
+    cardplayed1 = players[StartPlayer].hand.pop(int(recv(players[StartPlayer])))
+    tell_A_B_played_card(players[(StartPlayer+1)%3], players[(StartPlayer)%3], cardplayed1)
+    tell_A_B_played_card(players[(StartPlayer+2)%3], players[(StartPlayer)%3], cardplayed1)
     
     send_msg("play_card", players[(StartPlayer+1)%3])
-    cardplayed = players[(StartPlayer+1)%3].hand.pop(int(recv(players[(StartPlayer+1)%3])))
-    send_msg("info", players[(StartPlayer+2)%3])
-    send_msg("info", players[StartPlayer])
-    send_msg("{players[(StartPlayer+1)%3].name}", players[(StartPlayer+2)%3])
-    send_msg("{players[(StartPlayer+1)%3].name}", players[StartPlayer])
-    send_msg("{cardplayed}", players[(StartPlayer+2)%3])
-    send_msg("{cardplayed}", players[StartPlayer])
+    cardplayed2 = players[(StartPlayer+1)%3].hand.pop(int(recv(players[(StartPlayer+1)%3])))
+    tell_A_B_played_card(players[(StartPlayer+2)%3], players[(StartPlayer+1)%3], cardplayed2)
+    tell_A_B_played_card(players[(StartPlayer)%3], players[(StartPlayer+1)%3], cardplayed2)
 
     send_msg("play_card", players[(StartPlayer+2)%3])
-    cardplayed = players[(StartPlayer+2)%3].hand.pop(int(recv(players[(StartPlayer+2)%3])))
-    send_msg("info", players[StartPlayer])
-    send_msg("info", players[(StartPlayer+1)%3])
-    send_msg("{players[(StartPlayer+2)%3].name}", players[StartPlayer])
-    send_msg("{players[(StartPlayer+2)%3].name}", players[(StartPlayer+1)%3])
-    send_msg("{cardplayed}", players[StartPlayer])
-    send_msg("{cardplayed}", players[(StartPlayer+1)%3])
+    cardplayed3 = players[(StartPlayer+2)%3].hand.pop(int(recv(players[(StartPlayer+2)%3])))
+    tell_A_B_played_card(players[(StartPlayer+1)%3], players[(StartPlayer+2)%3], cardplayed3)
+    tell_A_B_played_card(players[(StartPlayer)%3], players[(StartPlayer+2)%3], cardplayed3)
+
+    trickwinner = getWinner(cardplayed1, cardplayed2, cardplayed3, trump_suit)
+    tellAll("trick_winner")
+    tellAll(players[(trickwinner+StartPlayer) %3].name)
+    return (trickwinner+StartPlayer)%3
 
 
 
@@ -144,53 +176,53 @@ def bidding(pos1, pos2, pos3):
     while True:
         bid+=1
         #ask pos2 and pos 1 if they will bid next bid
-        if getBiddingOkay(pos2, biddingOrder[bid]):
-            bidding_info(pos2, biddingOrder[bid])
-            if not getBiddingOkay(pos1, biddingOrder[bid]):
+        if getBiddingOkay(pos2, BIDDING_ORDER[bid]):
+            bidding_info(pos2, BIDDING_ORDER[bid])
+            if not getBiddingOkay(pos1, BIDDING_ORDER[bid]):
                 bidding_info(pos1, 0)
                 while True:
                     bid+=1
                     #ask pos3 and pos2 after pos1 is out
-                    if getBiddingOkay(pos3, biddingOrder[bid]):
-                        bidding_info(pos3, biddingOrder[bid])
-                        if not getBiddingOkay(pos2, biddingOrder[bid]):
+                    if getBiddingOkay(pos3, BIDDING_ORDER[bid]):
+                        bidding_info(pos3, BIDDING_ORDER[bid])
+                        if not getBiddingOkay(pos2, BIDDING_ORDER[bid]):
                             bidding_info(pos2, 0)
-                            bidding_winner(pos3, biddingOrder[bid])
+                            bidding_winner(pos3, BIDDING_ORDER[bid])
                             return bid,pos3
                         else:
-                            bidding_info(pos2, biddingOrder[bid])
+                            bidding_info(pos2, BIDDING_ORDER[bid])
                     else:
                         bidding_info(pos3, 0)
-                        bidding_winner(pos2, biddingOrder[bid-1])
+                        bidding_winner(pos2, BIDDING_ORDER[bid-1])
                         return bid-1,pos2
             else:
-                bidding_info(pos1, biddingOrder[bid])
+                bidding_info(pos1, BIDDING_ORDER[bid])
         else:
             bidding_info(pos2, 0)
             bid-=1
             while True:
                 bid+=1
                 #ask pos3 and pos1 after pos2 is out
-                if getBiddingOkay(pos3, biddingOrder[bid]):
-                    bidding_info(pos3, biddingOrder[bid])
-                    if not getBiddingOkay(pos1, biddingOrder[bid]):
+                if getBiddingOkay(pos3, BIDDING_ORDER[bid]):
+                    bidding_info(pos3, BIDDING_ORDER[bid])
+                    if not getBiddingOkay(pos1, BIDDING_ORDER[bid]):
                         bidding_info(pos1, 0)
-                        bidding_winner(pos3, biddingOrder[bid])
+                        bidding_winner(pos3, BIDDING_ORDER[bid])
                         return bid,pos3
                     else:
-                        bidding_info(pos1, biddingOrder[bid])
+                        bidding_info(pos1, BIDDING_ORDER[bid])
                 else:
                     bidding_info(pos3, 0)
                     if bid==0:
-                        if getBiddingOkay(pos1, biddingOrder[bid]):
-                            bidding_info(pos1, biddingOrder[bid])
-                            bidding_winner(pos1, biddingOrder[bid])
+                        if getBiddingOkay(pos1, BIDDING_ORDER[bid]):
+                            bidding_info(pos1, BIDDING_ORDER[bid])
+                            bidding_winner(pos1, BIDDING_ORDER[bid])
                             return bid,pos1
                         else:
                             bidding_winner("no one", 0)
                             return bid-1, pos1
                     else:
-                        bidding_winner(pos1, biddingOrder[bid-1])
+                        bidding_winner(pos1, BIDDING_ORDER[bid-1])
                         return bid-1,pos1
                     
 
