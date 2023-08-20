@@ -44,6 +44,10 @@ def play_hand():
         elif next == "trump":
             trump = recv()
             print(f"The trump suit is {trump}.")
+        elif next == "hand_winner":
+            winner = recv()
+            print(f"{winner} won the hand.")
+            return
 
 
 def print_hand_with_ids():
@@ -100,8 +104,10 @@ def get_connected():
     
     conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     conn.connect(("localhost", 8000))
-    player = Player(input("What would you like to be called? "), conn, 0)
-    name = player.name
+    name = input("What would you like to be called? ")
+    if name[-1] == " ":
+        name = name[:-1]
+    player = Player(name, conn, 0)
     print()
     send_msg(name)
 
