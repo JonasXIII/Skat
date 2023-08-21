@@ -37,9 +37,6 @@ def build_connections():
     print("Name 1 = "+players[0].name)
     print("Name 2 = "+players[1].name)
     print("Name 3 = "+players[2].name)
-    
-
-
 
 def deal_cards():
     Skat_card = (deal(ALL_CARDS, players[0], players[1],players[2], 11))
@@ -59,8 +56,27 @@ def play_round():
     for i in range(2):
         deal_cards()
         winning_bid, solo_player_pos = bid(i)
+        plan_game(players[solo_player_pos])
         eyes = play(i)
         report_hand_results(eyes, winning_bid, solo_player_pos-1)
+
+def plan_game(solo):
+    send_msg("solo_player", solo)
+    send_msg("hand?", solo)
+    hand = recv(solo)
+    if hand == "okay":
+        tellAll("info")
+        tellAll(f"{solo.name} is playing hand")
+    else:
+        tellAll("info")
+        tellAll(f"{solo.name} is looking at skat")
+        send_msg("skat", solo)
+        send_msg(f"{Skat.pop(0).id}")
+        send_msg(f"{Skat.pop(0).id}")
+        Skat.append(get_card(int(recv(solo))))
+        Skat.append(get_card(int(recv(solo))))
+        
+
 
 def bid(starting_player_pos):
     global highest_bid

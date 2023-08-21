@@ -1,6 +1,7 @@
 import socket
 import time
 from Skat import *
+from cardDealer import *
 
 print("Welcome to Skat!")
 
@@ -16,7 +17,63 @@ def main():
             bidding()
         elif next_thing == "play_hand":
             play_hand()
-        
+        elif next_thing == "solo_player":
+            plan_game()
+
+def plan_game():
+    print("Planning game.")
+    next = recv()
+    while True:
+        if next == "hand?":
+            while True:
+                choice = input("Would you like to look at the Skat? (y/n) ")
+                if choice == "y" or choice == "y ":
+                    send_msg("okay")
+                    break
+                elif choice == "n" or choice == "n ":
+                    send_msg("no")
+                    break
+        elif next == "skat":
+            player.hand.append(get_card(int(recv())))
+            player.hand.append(get_card(int(recv())))
+            player.hand.sort(key=comp)
+            send_msg(str(player.hand.pop(choose_card_from_hand("Choose a card to put back into the Skat.")).id))
+            send_msg(str(player.hand.pop(choose_card_from_hand("Choose another card to put back into the Skat.")).id))
+        elif next == "trump":
+            while True:
+                choice = input("Would would you like trump to be? \n(yellow/y)\n(red/r)\n(green/g)\n(blue/b)\n(grand/gd)\n(null/n)\n")
+                if choice == "y" or choice == "yellow" or choice == "y " or choice == "yellow ":
+                    send_msg("yellow")
+                    break
+                elif choice == "r" or choice == "red" or choice == "r " or choice == "red ":
+                    send_msg("red")
+                    break
+                elif choice == "g" or choice == "green" or choice == "g " or choice == "green ":
+                    send_msg("green")
+                    break
+                elif choice == "b" or choice == "blue" or choice == "b " or choice == "blue ": 
+                    send_msg("blue")
+                    break
+                elif choice == "gd" or choice == "grand" or choice == "gd " or choice == "grand ":
+                    send_msg("grand")
+                    break
+                elif choice == "n" or choice == "null" or choice == "n " or choice == "null ":
+                    send_msg("null")
+                    break
+            
+def choose_card_from_hand(prompt):
+    while True:
+        print_hand_with_ids()
+        choice = input(prompt)
+        try:
+            choice = int(choice)
+            if choice < 0 or choice >= len(player.hand):
+                print("Please enter a valid number.")
+            else:
+                return choice
+        except ValueError:
+            print("Please enter a valid number.")
+
 def send_msg(msg):
     message_length = len(msg)
     player.conn.sendall(message_length.to_bytes(4, byteorder='big') + msg.encode())
@@ -31,7 +88,7 @@ def play_hand():
         next = recv()
         if next == "play_card":
             print_hand_with_ids()
-            card = input("PLay a card:")
+            card = choose_card_from_hand("Play a card:")
             print(f"{player.hand.pop(int(card))}.")
             send_msg(card)
         elif next == "info":
@@ -48,7 +105,6 @@ def play_hand():
             winner = recv()
             print(f"{winner} won the hand.")
             return
-
 
 def print_hand_with_ids():
      # Print the header row with numbers
@@ -110,9 +166,6 @@ def get_connected():
     player = Player(name, conn, 0)
     print()
     send_msg(name)
-
-
-
 
 if __name__ == "__main__":
     main()
